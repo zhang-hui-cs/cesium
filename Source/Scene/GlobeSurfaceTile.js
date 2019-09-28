@@ -6,6 +6,7 @@ define([
         '../Core/defineProperties',
         '../Core/IndexDatatype',
         '../Core/IntersectionTests',
+        '../Core/OrientedBoundingBox',
         '../Core/PixelFormat',
         '../Core/Request',
         '../Core/RequestState',
@@ -20,12 +21,12 @@ define([
         '../Renderer/TextureMinificationFilter',
         '../Renderer/TextureWrap',
         '../Renderer/VertexArray',
+        '../ThirdParty/when',
         './ImageryState',
         './QuadtreeTileLoadState',
         './SceneMode',
         './TerrainState',
-        './TileBoundingRegion',
-        '../ThirdParty/when'
+        './TileBoundingRegion'
     ], function(
         BoundingSphere,
         Cartesian3,
@@ -34,6 +35,7 @@ define([
         defineProperties,
         IndexDatatype,
         IntersectionTests,
+        OrientedBoundingBox,
         PixelFormat,
         Request,
         RequestState,
@@ -48,12 +50,12 @@ define([
         TextureMinificationFilter,
         TextureWrap,
         VertexArray,
+        when,
         ImageryState,
         QuadtreeTileLoadState,
         SceneMode,
         TerrainState,
-        TileBoundingRegion,
-        when) {
+        TileBoundingRegion) {
     'use strict';
 
     /**
@@ -302,7 +304,7 @@ define([
     GlobeSurfaceTile.prototype.processImagery = function(tile, terrainProvider, frameState, skipLoading) {
         var surfaceTile = tile.data;
         var isUpsampledOnly = tile.upsampledFromParent;
-        var isRenderable = tile.renderable;
+        var isAnyTileLoaded = false;
         var isDoneLoading = true;
 
         // Transition imagery states
@@ -335,20 +337,33 @@ define([
             isDoneLoading = isDoneLoading && thisTileDoneLoading;
 
             // The imagery is renderable as soon as we have any renderable imagery for this region.
-            isRenderable = isRenderable && (thisTileDoneLoading || defined(tileImagery.readyImagery));
+            isAnyTileLoaded = isAnyTileLoaded || (thisTileDoneLoading || defined(tileImagery.readyImagery));
 
             isUpsampledOnly = isUpsampledOnly && defined(tileImagery.loadingImagery) &&
                               (tileImagery.loadingImagery.state === ImageryState.FAILED || tileImagery.loadingImagery.state === ImageryState.INVALID);
         }
 
         tile.upsampledFromParent = isUpsampledOnly;
-        tile.renderable = isRenderable;
+
+        // Allow rendering if any available layers are loaded
+        tile.renderable = tile.renderable && (isAnyTileLoaded || isDoneLoading);
 
         return isDoneLoading;
     };
 
     function prepareNewTile(tile, terrainProvider, imageryLayerCollection) {
-        if (terrainProvider.getTileDataAvailable(tile.x, tile.y, tile.level) === false) {
+        var available = terrainProvider.getTileDataAvailable(tile.x, tile.y, tile.level);
+
+        if (!defined(available) && defined(tile.parent)) {
+            // Provider doesn't know if this tile is available. Does the parent tile know?
+            var parent = tile.parent;
+            var parentSurfaceTile = parent.data;
+            if (defined(parentSurfaceTile) && defined(parentSurfaceTile.terrainData)) {
+                available = parentSurfaceTile.terrainData.isChildAvailable(parent.x, parent.y, tile.x, tile.y);
+            }
+        }
+
+        if (available === false) {
             // This tile is not available, so mark it failed so we start upsampling right away.
             tile.data.terrainState = TerrainState.FAILED;
         }
@@ -511,6 +526,8 @@ define([
 
         when(meshPromise, function(mesh) {
             surfaceTile.mesh = mesh;
+            surfaceTile.orientedBoundingBox = OrientedBoundingBox.clone(mesh.orientedBoundingBox, surfaceTile.orientedBoundingBox);
+            surfaceTile.occludeePointInScaledSpace = Cartesian3.clone(mesh.occludeePointInScaledSpace, surfaceTile.occludeePointInScaledSpace);
             surfaceTile.terrainState = TerrainState.TRANSFORMED;
         }, function() {
             surfaceTile.terrainState = TerrainState.FAILED;
