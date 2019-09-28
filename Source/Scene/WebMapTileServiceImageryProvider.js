@@ -1,41 +1,44 @@
 define([
-        '../Core/combine',
-        '../Core/Credit',
-        '../Core/defaultValue',
-        '../Core/defined',
-        '../Core/defineProperties',
-        '../Core/DeveloperError',
-        '../Core/Event',
-        '../Core/freezeObject',
-        '../Core/isArray',
-        '../Core/Rectangle',
-        '../Core/Resource',
-        '../Core/WebMercatorTilingScheme',
-        '../ThirdParty/when',
-        './ImageryProvider',
-        './TimeDynamicImagery'
-    ], function(
-        combine,
-        Credit,
-        defaultValue,
-        defined,
-        defineProperties,
-        DeveloperError,
-        Event,
-        freezeObject,
-        isArray,
-        Rectangle,
-        Resource,
-        WebMercatorTilingScheme,
-        when,
-        ImageryProvider,
-        TimeDynamicImagery) {
+    '../Core/combine',
+    '../Core/Credit',
+    '../Core/defaultValue',
+    '../Core/defined',
+    '../Core/defineProperties',
+    '../Core/DeveloperError',
+    '../Core/Event',
+    '../Core/freezeObject',
+    '../Core/isArray',
+    '../Core/Rectangle',
+    '../Core/Resource',
+    '../Core/WebMercatorTilingScheme',
+    '../ThirdParty/when',
+    './ImageryProvider',
+    './TimeDynamicImagery',
+    './WebMapTileServiceImageryCache'
+], function(
+    combine,
+    Credit,
+    defaultValue,
+    defined,
+    defineProperties,
+    DeveloperError,
+    Event,
+    freezeObject,
+    isArray,
+    Rectangle,
+    Resource,
+    WebMercatorTilingScheme,
+    when,
+    ImageryProvider,
+    TimeDynamicImagery,
+    WebMapTileServiceImageryCache
+) {
     'use strict';
 
     var defaultParameters = freezeObject({
-        service : 'WMTS',
-        version : '1.0.0',
-        request : 'GetTile'
+        service: 'WMTS',
+        version: '1.0.0',
+        request: 'GetTile'
     });
 
     /**
@@ -145,7 +148,9 @@ define([
             throw new DeveloperError('options.tileMatrixSetID is required.');
         }
         if (defined(options.times) && !defined(options.clock)) {
-            throw new DeveloperError('options.times was specified, so options.clock is required.');
+            throw new DeveloperError(
+                'options.times was specified, so options.clock is required.'
+            );
         }
         //>>includeEnd('debug');
 
@@ -156,9 +161,9 @@ define([
         var url = resource.url;
         if (url.indexOf('{') >= 0) {
             var templateValues = {
-                style : style,
-                Style : style,
-                TileMatrixSet : tileMatrixSetID
+                style: style,
+                Style: style,
+                TileMatrixSet: tileMatrixSetID
             };
 
             resource.setTemplateValues(templateValues);
@@ -176,31 +181,42 @@ define([
         this._format = defaultValue(options.format, 'image/jpeg');
         this._tileDiscardPolicy = options.tileDiscardPolicy;
 
-        this._tilingScheme = defined(options.tilingScheme) ? options.tilingScheme : new WebMercatorTilingScheme({ellipsoid : options.ellipsoid});
+        this._tilingScheme = defined(options.tilingScheme)
+            ? options.tilingScheme
+            : new WebMercatorTilingScheme({ ellipsoid: options.ellipsoid });
         this._tileWidth = defaultValue(options.tileWidth, 256);
         this._tileHeight = defaultValue(options.tileHeight, 256);
 
         this._minimumLevel = defaultValue(options.minimumLevel, 0);
         this._maximumLevel = options.maximumLevel;
 
-        this._rectangle = defaultValue(options.rectangle, this._tilingScheme.rectangle);
+        this._rectangle = defaultValue(
+            options.rectangle,
+            this._tilingScheme.rectangle
+        );
         this._dimensions = options.dimensions;
 
         var that = this;
         this._reload = undefined;
         if (defined(options.times)) {
             this._timeDynamicImagery = new TimeDynamicImagery({
-                clock : options.clock,
-                times : options.times,
-                requestImageFunction : function(x, y, level, request, interval) {
+                clock: options.clock,
+                times: options.times,
+                requestImageFunction: function(x, y, level, request, interval) {
                     return requestImage(that, x, y, level, request, interval);
                 },
-                reloadFunction : function() {
+                reloadFunction: function() {
                     if (defined(that._reload)) {
                         that._reload();
                     }
                 }
             });
+        } else if (
+            defined(options.cache) &&
+            defined(options.cache.enable) &&
+            options.cache.enable === true
+        ) {
+            this._cache = new WebMapTileServiceImageryCache(options.cache);
         }
 
         this._readyPromise = when.resolve(true);
@@ -208,12 +224,24 @@ define([
         // Check the number of tiles at the minimum level.  If it's more than four,
         // throw an exception, because starting at the higher minimum
         // level will cause too many tiles to be downloaded and rendered.
-        var swTile = this._tilingScheme.positionToTileXY(Rectangle.southwest(this._rectangle), this._minimumLevel);
-        var neTile = this._tilingScheme.positionToTileXY(Rectangle.northeast(this._rectangle), this._minimumLevel);
-        var tileCount = (Math.abs(neTile.x - swTile.x) + 1) * (Math.abs(neTile.y - swTile.y) + 1);
+        var swTile = this._tilingScheme.positionToTileXY(
+            Rectangle.southwest(this._rectangle),
+            this._minimumLevel
+        );
+        var neTile = this._tilingScheme.positionToTileXY(
+            Rectangle.northeast(this._rectangle),
+            this._minimumLevel
+        );
+        var tileCount =
+            (Math.abs(neTile.x - swTile.x) + 1) *
+            (Math.abs(neTile.y - swTile.y) + 1);
         //>>includeStart('debug', pragmas.debug);
         if (tileCount > 4) {
-            throw new DeveloperError('The imagery provider\'s rectangle and minimumLevel indicate that there are ' + tileCount + ' tiles at the minimum level. Imagery providers with more than four tiles at the minimum level are not supported.');
+            throw new DeveloperError(
+                "The imagery provider's rectangle and minimumLevel indicate that there are " +
+                    tileCount +
+                    ' tiles at the minimum level. Imagery providers with more than four tiles at the minimum level are not supported.'
+            );
         }
         //>>includeEnd('debug');
 
@@ -294,8 +322,8 @@ define([
          * @type {String}
          * @readonly
          */
-        url : {
-            get : function() {
+        url: {
+            get: function() {
                 return this._resource.url;
             }
         },
@@ -306,8 +334,8 @@ define([
          * @type {Proxy}
          * @readonly
          */
-        proxy : {
-            get : function() {
+        proxy: {
+            get: function() {
                 return this._resource.proxy;
             }
         },
@@ -319,8 +347,8 @@ define([
          * @type {Number}
          * @readonly
          */
-        tileWidth : {
-            get : function() {
+        tileWidth: {
+            get: function() {
                 return this._tileWidth;
             }
         },
@@ -332,8 +360,8 @@ define([
          * @type {Number}
          * @readonly
          */
-        tileHeight : {
-            get : function() {
+        tileHeight: {
+            get: function() {
                 return this._tileHeight;
             }
         },
@@ -345,8 +373,8 @@ define([
          * @type {Number}
          * @readonly
          */
-        maximumLevel : {
-            get : function() {
+        maximumLevel: {
+            get: function() {
                 return this._maximumLevel;
             }
         },
@@ -358,8 +386,8 @@ define([
          * @type {Number}
          * @readonly
          */
-        minimumLevel : {
-            get : function() {
+        minimumLevel: {
+            get: function() {
                 return this._minimumLevel;
             }
         },
@@ -371,8 +399,8 @@ define([
          * @type {TilingScheme}
          * @readonly
          */
-        tilingScheme : {
-            get : function() {
+        tilingScheme: {
+            get: function() {
                 return this._tilingScheme;
             }
         },
@@ -384,8 +412,8 @@ define([
          * @type {Rectangle}
          * @readonly
          */
-        rectangle : {
-            get : function() {
+        rectangle: {
+            get: function() {
                 return this._rectangle;
             }
         },
@@ -399,8 +427,8 @@ define([
          * @type {TileDiscardPolicy}
          * @readonly
          */
-        tileDiscardPolicy : {
-            get : function() {
+        tileDiscardPolicy: {
+            get: function() {
                 return this._tileDiscardPolicy;
             }
         },
@@ -413,8 +441,8 @@ define([
          * @type {Event}
          * @readonly
          */
-        errorEvent : {
-            get : function() {
+        errorEvent: {
+            get: function() {
                 return this._errorEvent;
             }
         },
@@ -425,8 +453,8 @@ define([
          * @type {String}
          * @readonly
          */
-        format : {
-            get : function() {
+        format: {
+            get: function() {
                 return this._format;
             }
         },
@@ -437,8 +465,8 @@ define([
          * @type {Boolean}
          * @readonly
          */
-        ready : {
-            value : true
+        ready: {
+            value: true
         },
 
         /**
@@ -447,8 +475,8 @@ define([
          * @type {Promise.<Boolean>}
          * @readonly
          */
-        readyPromise : {
-            get : function() {
+        readyPromise: {
+            get: function() {
                 return this._readyPromise;
             }
         },
@@ -460,8 +488,8 @@ define([
          * @type {Credit}
          * @readonly
          */
-        credit : {
-            get : function() {
+        credit: {
+            get: function() {
                 return this._credit;
             }
         },
@@ -476,8 +504,8 @@ define([
          * @type {Boolean}
          * @readonly
          */
-        hasAlphaChannel : {
-            get : function() {
+        hasAlphaChannel: {
+            get: function() {
                 return true;
             }
         },
@@ -486,11 +514,11 @@ define([
          * @memberof WebMapTileServiceImageryProvider.prototype
          * @type {Clock}
          */
-        clock : {
-            get : function() {
+        clock: {
+            get: function() {
                 return this._timeDynamicImagery.clock;
             },
-            set : function(value) {
+            set: function(value) {
                 this._timeDynamicImagery.clock = value;
             }
         },
@@ -501,11 +529,11 @@ define([
          * @memberof WebMapTileServiceImageryProvider.prototype
          * @type {TimeIntervalCollection}
          */
-        times : {
-            get : function() {
+        times: {
+            get: function() {
                 return this._timeDynamicImagery.times;
             },
-            set : function(value) {
+            set: function(value) {
                 this._timeDynamicImagery.times = value;
             }
         },
@@ -514,11 +542,11 @@ define([
          * @memberof WebMapTileServiceImageryProvider.prototype
          * @type {Object}
          */
-        dimensions : {
-            get : function() {
+        dimensions: {
+            get: function() {
                 return this._dimensions;
             },
-            set : function(value) {
+            set: function(value) {
                 if (this._dimensions !== value) {
                     this._dimensions = value;
                     if (defined(this._reload)) {
@@ -539,7 +567,11 @@ define([
      *
      * @exception {DeveloperError} <code>getTileCredits</code> must not be called before the imagery provider is ready.
      */
-    WebMapTileServiceImageryProvider.prototype.getTileCredits = function(x, y, level) {
+    WebMapTileServiceImageryProvider.prototype.getTileCredits = function(
+        x,
+        y,
+        level
+    ) {
         return undefined;
     };
 
@@ -558,7 +590,12 @@ define([
      *
      * @exception {DeveloperError} <code>requestImage</code> must not be called before the imagery provider is ready.
      */
-    WebMapTileServiceImageryProvider.prototype.requestImage = function(x, y, level, request) {
+    WebMapTileServiceImageryProvider.prototype.requestImage = function(
+        x,
+        y,
+        level,
+        request
+    ) {
         var result;
         var timeDynamicImagery = this._timeDynamicImagery;
         var currentInterval;
@@ -567,11 +604,19 @@ define([
         if (defined(timeDynamicImagery)) {
             currentInterval = timeDynamicImagery.currentInterval;
             result = timeDynamicImagery.getFromCache(x, y, level, request);
+        } else if (defined(this._cache)) {
+            const key = WebMapTileServiceImageryCache.getKey(x, y, level);
+            result = this._cache.getFromCache(key);
         }
 
         // Couldn't load from cache
         if (!defined(result)) {
             result = requestImage(this, x, y, level, request, currentInterval);
+
+            if (defined(this._cache)) {
+                const key = WebMapTileServiceImageryCache.getKey(x, y, level);
+                this._cache.add(key, result);
+            }
         }
 
         // If we are approaching an interval, preload this tile in the next interval
@@ -596,8 +641,20 @@ define([
      *                   instances.  The array may be empty if no features are found at the given location.
      *                   It may also be undefined if picking is not supported.
      */
-    WebMapTileServiceImageryProvider.prototype.pickFeatures = function(x, y, level, longitude, latitude) {
+    WebMapTileServiceImageryProvider.prototype.pickFeatures = function(
+        x,
+        y,
+        level,
+        longitude,
+        latitude
+    ) {
         return undefined;
+    };
+
+    WebMapTileServiceImageryProvider.prototype.clear = function() {
+        if (defined(this._cache)) {
+            this._cache.clear();
+        }
     };
 
     return WebMapTileServiceImageryProvider;
