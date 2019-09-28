@@ -1,6 +1,10 @@
 // Cesium project settings for VSCode.
 {
     "files.exclude": {
+        "**/.github": true,
+        "**/.concierge": true,
+        "**/Documentation": true,
+        "**/node_modules": true,
         "**/.git": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
@@ -19,6 +23,7 @@
     "files.associations": {
         "*.czml": "json"
     },
+    "prettier.singleQuote": true,
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "editor.insertSpaces": true,
