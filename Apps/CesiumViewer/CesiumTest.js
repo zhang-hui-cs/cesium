@@ -9,6 +9,7 @@ define([
     'Cesium/Core/ScreenSpaceEventType',
     'Cesium/Core/Transforms',
     'Cesium/Scene/Cesium3DTileset',
+    './SampleDemo/ArcgisLoader',
     './SampleDemo/TilesetLoader',
     './SampleDemo/WmtsLoader'
 ], function(
@@ -22,6 +23,7 @@ define([
     ScreenSpaceEventType,
     Transforms,
     Cesium3DTileset,
+    ArcgisLoader,
     TilesetLoader,
     WmtsLoader
 ) {
@@ -40,16 +42,18 @@ define([
         addDemoes(this._viewer);
 
         this._viewer.camera.flyTo({
-            destination: Cartesian3.fromDegrees(112.150846, 27.950128, 1500)
+            destination: Cartesian3.fromDegrees(112.956038, 28.251618, 1000),
+            duration: 0
         });
     };
 
     function addDemoes(viewer) {
-        let loader = new WmtsLoader(viewer);
-        loader.execute();
+        // let loader = new WmtsLoader(viewer);
+        // loader.execute();
 
-        loader = new TilesetLoader(viewer);
-        loader.execute();
+        // new TilesetLoader(viewer).execute();
+
+        new ArcgisLoader(viewer).execute();
     }
 
     function config(viewer) {

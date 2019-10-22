@@ -28,10 +28,18 @@ define([
     TilesetLoader.prototype.execute = function() {
         const tileset = this._viewer.scene.primitives.add(
             new Cesium3DTileset({
-                url: 'http://localhost:2001/osgb/main/tileset.json',
+                // url: 'http://localhost:2001/osgb/main/tileset.json',
+                url: 'http://localhost:2001/osgb/hengyang/tileset.json',
                 clippingPlanes: new ClippingPlaneCollection({
                     planes: [
-                        new ClippingPlane(new Cartesian3(1, 0, 0), 0)
+                        new ClippingPlane(new Cartesian3(1, 0, 0), -30),
+                        new ClippingPlane(new Cartesian3(0, 1, 0), -30),
+                        new ClippingPlane(new Cartesian3(-1, 0, 0), -30),
+                        new ClippingPlane(new Cartesian3(0, -1, 0), -30),
+                        // new ClippingPlane(new Cartesian3(1, 0, 0), -30 - 100),
+                        // new ClippingPlane(new Cartesian3(0, 1, 0), -30),
+                        // new ClippingPlane(new Cartesian3(-1, 0, 0), -30 + 100),
+                        // new ClippingPlane(new Cartesian3(0, -1, 0), -30)
                         // new ClippingPlane(new Cartesian3(0, 1, 0), 0),
                         // new ClippingPlane(new Cartesian3(-1, 0, 0), 50),
                         // new ClippingPlane(new Cartesian3(-1, 0, 0), 200),
