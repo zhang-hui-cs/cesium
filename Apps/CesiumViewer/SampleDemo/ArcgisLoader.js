@@ -1,14 +1,21 @@
 define(['Cesium/Scene/ArcGisMapServerImageryProvider'], function(
     ArcGisMapServerImageryProvider
 ) {
+    'use strict';
+
     function ArcgisLoader(theViewer) {
         this._viewer = theViewer;
     }
 
     ArcgisLoader.prototype.execute = function() {
+        const layerIds = [];
+        for (let i = 0; i <= 170; i++) {
+            layerIds.push(i);
+        }
         const esriProvider = new ArcGisMapServerImageryProvider({
             url:
-                'http://172.16.11.6:6080/arcgis/rest/services/CityDesignV6/XJXQCSSJPlanMap/MapServer'
+                'http://swz-desktop:6080/arcgis/rest/services/cssj/XJXQCSSJPlanMap/MapServer',
+            usePreCachedTilesIfAvailable: false
         });
 
         this._viewer.imageryLayers.addImageryProvider(esriProvider);

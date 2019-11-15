@@ -10,19 +10,6 @@
             "name": "Launch Chrome",
             "url": "http://localhost:8080/Apps/CesiumViewer/index.html",
             "webRoot": "${workspaceFolder}"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceRoot}\\server.js",
-            "cwd": "${workspaceRoot}"
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach to Process",
-            "port": 5858
         }
     ]
 }

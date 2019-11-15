@@ -1,6 +1,8 @@
 define(['Cesium/Scene/WebMapTileServiceImageryProvider'], function(
     WebMapTileServiceImageryProvider
 ) {
+    'use strict';
+
     function WmtsLoader(theViewer) {
         this._viewer = theViewer;
     }

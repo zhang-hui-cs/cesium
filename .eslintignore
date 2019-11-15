@@ -1,6 +1,7 @@
 Apps/HelloWorld.html
 Apps/Sandcastle/ThirdParty/**
 Build/**
+Source/**
 Documentation/**
 Source/Shaders/**
 Source/ThirdParty/**

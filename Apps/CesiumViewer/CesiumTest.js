@@ -48,12 +48,16 @@ define([
     };
 
     function addDemoes(viewer) {
-        // let loader = new WmtsLoader(viewer);
-        // loader.execute();
-
         // new TilesetLoader(viewer).execute();
-
         new ArcgisLoader(viewer).execute();
+    }
+
+    function executeOthers(viewer) {
+        const rect = viewer.camera.computeViewRectangle(
+            viewer.scene.globe.ellipsoid
+        );
+
+        console.log('CesiumTest', rect);
     }
 
     function config(viewer) {
@@ -65,10 +69,31 @@ define([
         viewer.scene.debugShowFramesPerSecond = true;
         viewer.scene.requestRenderMode = true;
 
+        addMouseEvent(viewer);
+
         // viewer.scene.screenSpaceCameraController.enableTilt = false;
         // viewer.scene.screenSpaceCameraController.minimumZoomDistance = 750;
         // viewer.scene.screenSpaceCameraController.maximumZoomDistance = 15000;
     }
+
+    function addMouseEvent(viewer) {
+        const handler = new ScreenSpaceEventHandler(viewer.canvas);
+        handler.setInputAction(
+            event => onViewerLeftClick(viewer, event),
+            ScreenSpaceEventType.LEFT_CLICK
+        );
+
+        handler.setInputAction(
+            event => onViewerRightClick(viewer, event),
+            ScreenSpaceEventType.RIGHT_CLICK
+        );
+    }
+
+    function onViewerRightClick(viewer, event) {
+        executeOthers(viewer, event);
+    }
+
+    function onViewerLeftClick(viewer, event) {}
 
     return CesiumTest;
 });
