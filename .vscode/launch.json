@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome",
-            "url": "http://localhost:8080/Apps/Samples/transform_tileset_by_keyboard.html",
+            "url": "http://localhost:8080/Apps/Samples/transform_tileset_multi_by_keyboard/main.html",
             "webRoot": "${workspaceFolder}"
         }
     ]

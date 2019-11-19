@@ -19,6 +19,7 @@
     "files.associations": {
         "*.czml": "json"
     },
+    "prettier.singleQuote": true,
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "editor.insertSpaces": true,
