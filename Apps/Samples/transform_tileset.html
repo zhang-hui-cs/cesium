@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Hello World!</title>
+    <script src="../../Build/Cesium/Cesium.js"></script>
+    <style>
+        @import url(../../Build/Cesium/Widgets/widgets.css);
+
+        html,
+        body,
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer"></div>
+    <script>
+        const viewer = new Cesium.Viewer('cesiumContainer', {
+            baseLayerPicker: false,
+            fullscreenButton: false,
+            homeButton: false,
+            sceneModePicker: false,
+            selectionIndicator: false,
+            timeline: false,
+            animation: false,
+            navigationHelpButton: false,
+            infoBox: false,
+            geocoder: false,
+            imageryProvider: new Cesium.WebMapTileServiceImageryProvider({
+                url: `http://t0.tianditu.gov.cn/img_w/wmts?tk=9d2964079a8920b154e7bebe798f80ca`,
+                layer: "img",
+                style: "default",
+                tileMatrixSetID: "w",
+                format: "tiles",
+                maximumLevel: 18,
+            })
+        });
+
+        initial();
+
+        function initial() {
+            loadTileset();
+            addScreenSpaceEventHandler();
+        }
+
+        function loadTileset() {
+            viewer.imageryLayers.addImageryProvider(
+                new Cesium.ArcGisMapServerImageryProvider({
+                    url: "http://10.14.3.71:6080/arcgis/rest/services/CityDesignV6/XJXQCSSJPlanMap/MapServer"
+                })
+            );
+
+            const arrayMatrix = [
+                // Cesium.Matrix4.fromArray([0.9933615257850638, -0.059313998284562436, 0.09856332328746303, 0, 0.07769705381920103, 0.9777923878478111, -0.1946412445878109, 0, -0.08482951678387779, 0.2010072035385171, 0.97590986121047, 0, -450.99546569865197, 1068.6532330429181, 4437.611511115916, 1.0000000000000002])
+                Cesium.Matrix4.fromArray([0.9933820974048085, -0.05921169013565031, 0.0984173983953198, 0, 0.07757388029737741, 0.9777858491060097, -0.1947232045331208, 0, -0.08470124940773618, 0.20106916481479492, 0.9759082381604578, 0, -480.50902114482597, 1140.6626022998244, 4480.521615881007, 1])
+            ];
+
+            const arrayUrl = [
+                // "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/binjiangxincheng_prime/tileset.json",
+                // "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/dawangshan_prime/tileset.json",
+                // "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/meixihu_prime/tileset.json",
+                // "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/xiangjiangxinqu_tileset/tileset.json",
+                // "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/yanghu_prime/tileset.json",
+                // "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/%E5%9C%B0%E5%9D%97/binjiangxincheng/tileset.json",
+                "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/%E5%9C%B0%E5%9D%97/meixihu/tileset.json"
+            ];
+
+            arrayUrl.forEach((value, index) => {
+
+                const tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+                    url: value,
+                    modelMatrix: arrayMatrix[index]
+                }));
+
+                viewer.flyTo(tileset);
+            });
+
+        }
+
+        function onKeyDown() {
+            document.addEventListener("keypress", event => {
+                if (event.keyCode === 49) {
+                    // 字符: 1
+                } else if (event.keyCode === 50) {
+                    // 字符：2
+                }
+            });
+        }
+
+        function addScreenSpaceEventHandler() {
+            const handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+            handler.setInputAction(event => {
+                const pt1 = viewer.scene.pickPosition(event.position);
+                const matrix1 = Cesium.Transforms.eastNorthUpToFixedFrame(pt1);
+
+                const pt2 = Cesium.Cartesian3.fromDegrees(112.843468, 28.180215, 10);
+                const matrix2 = Cesium.Transforms.eastNorthUpToFixedFrame(pt2);
+
+                let matrix = new Cesium.Matrix4();
+                Cesium.Matrix4.multiply(matrix2, Cesium.Matrix4.inverse(matrix1, matrix), matrix);
+
+                console.log("matrix", Cesium.Matrix4.toArray(matrix));
+
+            }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        }
+    </script>
+</body>
+
+</html>
