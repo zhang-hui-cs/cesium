@@ -35,6 +35,9 @@
   "dependencies": {
     "esm": "^3.2.25"
   },
+  "prettier": {
+    "singleQuote": true
+  },
   "devDependencies": {
     "aws-sdk": "^2.531.0",
     "bluebird": "^3.4.6",

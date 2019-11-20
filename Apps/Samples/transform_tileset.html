@@ -66,7 +66,24 @@
 
             const arrayMatrix = [
                 // Cesium.Matrix4.fromArray([0.9933615257850638, -0.059313998284562436, 0.09856332328746303, 0, 0.07769705381920103, 0.9777923878478111, -0.1946412445878109, 0, -0.08482951678387779, 0.2010072035385171, 0.97590986121047, 0, -450.99546569865197, 1068.6532330429181, 4437.611511115916, 1.0000000000000002])
-                Cesium.Matrix4.fromArray([0.9933820974048085, -0.05921169013565031, 0.0984173983953198, 0, 0.07757388029737741, 0.9777858491060097, -0.1947232045331208, 0, -0.08470124940773618, 0.20106916481479492, 0.9759082381604578, 0, -480.50902114482597, 1140.6626022998244, 4480.521615881007, 1])
+                Cesium.Matrix4.fromArray([
+                    0.9933241485296076
+                    , -0.05950830495405002
+                    , 0.0988225560761608
+                    , 0
+                    , 0.07792806717603204
+                    , 0.9778032587052184
+                    , -0.194494225137055
+                    , 0
+                    , -0.08505499570359171
+                    , 0.20089686136660123
+                    , 0.9759129565688277
+                    , 0
+                    , -412.53871805686504
+                    , 974.4017146127298
+                    , 4366.731954822317
+                    , 1
+                ])
             ];
 
             const arrayUrl = [
@@ -76,7 +93,7 @@
                 // "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/xiangjiangxinqu_tileset/tileset.json",
                 // "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/yanghu_prime/tileset.json",
                 // "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/%E5%9C%B0%E5%9D%97/binjiangxincheng/tileset.json",
-                "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/%E5%9C%B0%E5%9D%97/meixihu/tileset.json"
+                "http://localhost:2001/%E6%B9%98%E6%B1%9F%E6%96%B0%E5%8C%BA%E5%9F%8E%E5%B8%82%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0/%E5%9C%B0%E5%9D%97/binjiangxincheng/tileset.json"
             ];
 
             arrayUrl.forEach((value, index) => {
@@ -107,7 +124,7 @@
                 const pt1 = viewer.scene.pickPosition(event.position);
                 const matrix1 = Cesium.Transforms.eastNorthUpToFixedFrame(pt1);
 
-                const pt2 = Cesium.Cartesian3.fromDegrees(112.843468, 28.180215, 10);
+                const pt2 = Cesium.Cartesian3.fromDegrees(112.946654, 28.244135, 10);
                 const matrix2 = Cesium.Transforms.eastNorthUpToFixedFrame(pt2);
 
                 let matrix = new Cesium.Matrix4();

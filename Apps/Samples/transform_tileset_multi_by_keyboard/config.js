@@ -27,7 +27,11 @@ function ConfigTool() {
         ],
         tilesetObjs: [],
         center: {
-            position: Cesium.Cartesian3.fromDegrees(112.870655, 28.180864),
+            position: Cesium.Cartesian3.fromDegrees(
+                112.870655,
+                28.180864,
+                10000
+            ),
             axisX: null,
             axisY: null,
             axisZ: null
@@ -46,7 +50,8 @@ function loadTileset(config) {
                 config.viewer.scene.primitives.add(
                     new Cesium.Cesium3DTileset({
                         url: ii,
-                        modelMatrix: config.modelMatrix
+                        modelMatrix: config.modelMatrix,
+                        debugShowBoundingVolume: true
                     })
                 )
             );
@@ -89,11 +94,39 @@ function loadArcgis(viewer) {
     }
 }
 
+function addCenterPoint(config) {
+    if (config && config.viewer) {
+        const cartographic = Cesium.Cartographic.fromCartesian(
+            config.center.position
+        );
+
+        const position = Cesium.Cartesian3.fromDegrees(
+            (cartographic.longitude * 180.0) / Math.PI,
+            (cartographic.latitude * 180.0) / Math.PI,
+            30
+        );
+
+        const pointEntity = config.viewer.entities.add({
+            position: position,
+            point: {
+                pixelSize: 10,
+                color: Cesium.Color.INDIGO
+            }
+        });
+
+        console.log(pointEntity);
+
+        config.viewer.zoomTo(pointEntity);
+    }
+}
+
 function initialCenter(config) {
     if (config && config.viewer) {
-        config.viewer.camera.flyTo({
-            destination: config.center.position
-        });
+        addCenterPoint(config);
+
+        // config.viewer.camera.flyTo({
+        //     destination: config.center.position
+        // });
 
         const matrix4 = Cesium.Transforms.eastNorthUpToFixedFrame(
             config.center.position
@@ -116,7 +149,7 @@ function initialCenter(config) {
 ConfigTool.prototype.initial = function() {
     this._config.viewer = initialViewer('cesiumContainer');
     initialCenter(this._config);
-    loadArcgis(this._config.viewer);
+    // loadArcgis(this._config.viewer);
     loadTileset(this._config);
 };
 

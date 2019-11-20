@@ -8,7 +8,7 @@ function EventListener() {}
 EventListener.prototype.onKeyDown = function() {
     document.addEventListener('keydown', event => {
         let offset = null;
-        let rotation = null;
+        let angle = null;
         const config = ConfigTool.getInstance().config;
         if (event.keyCode === 38) {
             // up arrow
@@ -41,16 +41,10 @@ EventListener.prototype.onKeyDown = function() {
             );
         } else if (event.key === '[') {
             // [
-            // rotation = Cesium.Quaternion.fromAxisAngle(
-            //     config.center.axisZ,
-            //     (-0.005 * Math.PI) / 180
-            // );
+            angle = (-0.5 * Math.PI) / 180;
         } else if (event.key === ']') {
             // ]
-            // rotation = Cesium.Quaternion.fromAxisAngle(
-            //     config.center.axisZ,
-            //     (0.005 * Math.PI) / 180
-            // );
+            angle = (0.5 * Math.PI) / 180;
         }
 
         if (offset) {
@@ -62,17 +56,30 @@ EventListener.prototype.onKeyDown = function() {
             });
         }
 
-        if (rotation) {
-            config.tilesetObjs.forEach(ii => {
-                const modelMatrix = Transform.rotate(ii, rotation);
-                if (modelMatrix) {
-                    config.modelMatrix = modelMatrix;
-                }
-            });
+        if (angle) {
+            config.tilesetObjs.forEach(ii => rotate(ii, angle));
         }
-
-        console.log('modelMatrix', config.modelMatrix);
     });
 };
+
+function rotate(tileset, angle) {
+    if (
+        tileset.ready &&
+        tileset.boundingSphere &&
+        tileset.boundingSphere.center
+    ) {
+        const matrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+            tileset.boundingSphere.center
+        );
+
+        const axisZ = Cesium.Cartesian3.fromCartesian4(
+            Cesium.Matrix4.getColumn(matrix, 2, new Cesium.Cartesian4())
+        );
+
+        const rotation = Cesium.Quaternion.fromAxisAngle(axisZ, angle);
+
+        Transform.rotate(tileset, rotation);
+    }
+}
 
 export { EventListener };

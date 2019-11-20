@@ -22,8 +22,8 @@ Transform.rotate = function(tileset, quaternion) {
         );
 
         return (tileset.modelMatrix = Cesium.Matrix4.multiply(
-            tileset.modelMatrix,
             matrix,
+            tileset.modelMatrix,
             new Cesium.Matrix4()
         ));
     }
