@@ -149,7 +149,7 @@ function initialCenter(config) {
 ConfigTool.prototype.initial = function() {
     this._config.viewer = initialViewer('cesiumContainer');
     initialCenter(this._config);
-    // loadArcgis(this._config.viewer);
+    loadArcgis(this._config.viewer);
     loadTileset(this._config);
 };
 
