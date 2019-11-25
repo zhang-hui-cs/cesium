@@ -3,6 +3,7 @@
     "files.exclude": {
         "**/.git": true,
         "**/.github": true,
+
         "**/.DS_Store": true,
         "**/Documentation": true,
         "**/node_modules": true,
