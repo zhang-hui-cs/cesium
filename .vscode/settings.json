@@ -12,7 +12,11 @@
         ".settings": true,
         ".externalToolBuilders": true,
         ".project": true,
-        "launches": true
+        "launches": true,
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
     },
     "search.exclude": {
         "Build": true,
