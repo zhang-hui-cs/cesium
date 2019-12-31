@@ -6,7 +6,9 @@
     "configurations": [
         {
             "type": "chrome",
-            "request": "launch",
+            "request": "attach",
+            "port": 9222,
+            // "runtimeExecutable": "C:/Program Files (x86)/Google/Chrome Beta/Application/chrome.exe",
             "name": "Launch Chrome",
             "url": "http://localhost:8080/Apps/Sandcastle/gallery/ArcGIS%20MapServer.html",
             "webRoot": "${workspaceFolder}"
