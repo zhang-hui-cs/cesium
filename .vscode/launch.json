@@ -6,11 +6,10 @@
     "configurations": [
         {
             "type": "chrome",
-            "request": "attach",
-            "port": 9222,
+            "request": "launch",
             // "runtimeExecutable": "C:/Program Files (x86)/Google/Chrome Beta/Application/chrome.exe",
-            "name": "Launch Chrome",
-            "url": "http://localhost:8080/Apps/Sandcastle/gallery/ArcGIS%20MapServer.html",
+            "name": "Launch HengYang",
+            "url": "http://127.0.0.1:8080/Apps/Samples/load-3dtileset-hengyang/index.html",
             "webRoot": "${workspaceFolder}"
         }
     ]
