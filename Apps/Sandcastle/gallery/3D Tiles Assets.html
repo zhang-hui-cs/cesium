@@ -62,7 +62,7 @@
             Cesium.knockout.applyBindings(viewModel, toolbar);
 
             var tileset = new Cesium.Cesium3DTileset({
-                url: '../../SampleData/Cesium3DTiles/Tilesets/Tileset/tileset.json'
+                url: Cesium.IonResource.fromAssetId(29334)
             });
 
             tileset.readyPromise.then(function(tileset) {
