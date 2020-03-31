@@ -45,7 +45,8 @@
 
             var tileset = new Cesium.Cesium3DTileset({
                 url: Cesium.IonResource.fromAssetId(29334),
-                maximumScreenSpaceError: 256
+                // maximumScreenSpaceError: 256,
+                cullRequestsWhileMovingMultiplier: 10,
             });
 
             tileset.readyPromise.then(function(tileset) {
