@@ -32,6 +32,7 @@
     </style>
     <div id="cesiumContainer" class="fullSize"></div>
     <script id="cesium_sandcastle_script">
+
         function startup(Cesium) {
             'use strict';
             Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzYmM0ZWUwZS01ZGI1LTRjYTEtOTM4Yi1hNmU3MzRiMzQxZjIiLCJpZCI6NzQ4NSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU0OTUxMjU3OX0.MQCNQxnMHinQd-qkt-oOkUpIgkl4sRPh4o8s3l3UTOI";
@@ -43,7 +44,9 @@
             viewer.scene.globe.depthTestAgainstTerrain = true;
 
             var tileset = new Cesium.Cesium3DTileset({
-                url: Cesium.IonResource.fromAssetId(29334)
+                url: Cesium.IonResource.fromAssetId(29334),
+                // maximumScreenSpaceError: 256,
+                cullRequestsWhileMovingMultiplier: 10,
             });
 
             tileset.readyPromise.then(function(tileset) {
@@ -52,14 +55,34 @@
             }).otherwise(function(error) {
                 console.log(error);
             });
+
+            addLeftClickEvent(viewer);
+            drawBox(viewer, tileset);
         }
 
         function addLeftClickEvent(viewer) {
             var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 
             handler.setInputAction((event) => {
-
+                if (event && event.position) {
+                    const position = viewer.scene.pickPosition(event.position);
+                    console.log(position);
+                }
             }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        }
+
+        function drawBox(viewer, tileset) {
+            const center = new Cesium.Cartesian3(
+                -2704275.5758120264,
+                -4261078.548546477,
+                3887018.2889108425);
+            const sphere = new Cesium.BoundingSphere(center, 200);
+            const cullingVolume = Cesium.CullingVolume.fromBoundingSphere(sphere);
+
+            tileset.specialVolume = {
+                cullingVolume: cullingVolume,
+                maximumScreenSpaceError: 16
+            };
         }
 
         if (typeof Cesium !== 'undefined') {
