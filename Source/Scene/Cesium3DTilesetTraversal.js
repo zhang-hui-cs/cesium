@@ -15,29 +15,29 @@ function isVisible(tile) {
 
 var traversal = {
     stack: new ManagedArray(),
-    stackMaximumLength: 0
+    stackMaximumLength: 0,
 };
 
 var emptyTraversal = {
     stack: new ManagedArray(),
-    stackMaximumLength: 0
+    stackMaximumLength: 0,
 };
 
 var descendantTraversal = {
     stack: new ManagedArray(),
-    stackMaximumLength: 0
+    stackMaximumLength: 0,
 };
 
 var selectionTraversal = {
     stack: new ManagedArray(),
     stackMaximumLength: 0,
     ancestorStack: new ManagedArray(),
-    ancestorStackMaximumLength: 0
+    ancestorStackMaximumLength: 0,
 };
 
 var descendantSelectionDepth = 2;
 
-Cesium3DTilesetTraversal.selectTiles = function(tileset, frameState) {
+Cesium3DTilesetTraversal.selectTiles = function (tileset, frameState) {
     tileset._requestedTiles.length = 0;
 
     if (tileset.debugFreezeFrame) {
@@ -274,7 +274,7 @@ function isOnScreenLongEnough(tileset, tile, frameState) {
             : camera.positionWCDeltaMagnitudeLastFrame;
     var movementRatio =
         (tileset.cullRequestsWhileMovingMultiplier * deltaMagnitude) / diameter; // How do n frames of this movement compare to the tile's physical size.
-    return movementRatio < 1.0;
+    return movementRatio < 50.0;
 }
 
 function loadTile(tileset, tile, frameState) {

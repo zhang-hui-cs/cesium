@@ -16,7 +16,11 @@
         "**/.classpath": true,
         "**/.project": true,
         "**/.settings": true,
-        "**/.factorypath": true
+        "**/.factorypath": true,
+        "**/Build": true,
+        "**/Specs": true,
+        "**/ThirdParty": true,
+        "**/Tools": true
     },
     "search.exclude": {
         "Build": true,
