@@ -43,7 +43,8 @@
             viewer.scene.globe.depthTestAgainstTerrain = true;
 
             var tileset = new Cesium.Cesium3DTileset({
-                url: Cesium.IonResource.fromAssetId(29334)
+                url: Cesium.IonResource.fromAssetId(29334),
+                dynamicScreenSpaceError: true,
             });
 
             tileset.readyPromise.then(function(tileset) {

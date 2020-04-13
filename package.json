@@ -33,6 +33,7 @@
   "module": "Source/Cesium.js",
   "type": "module",
   "dependencies": {
+    "@std/esm": "^0.26.0",
     "esm": "^3.2.25"
   },
   "prettier": {
