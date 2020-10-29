@@ -19,11 +19,15 @@ function initialViewer(element) {
         navigationHelpButton: false,
         infoBox: false,
         geocoder: false,
-        imageryProvider: new Cesium.UrlTemplateImageryProvider({
+        imageryProvider: new Cesium.WebMapTileServiceImageryProvider({
             url:
-                'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
-            maximumLevel: 17
-        })
+                'http://t0.tianditu.gov.cn/img_w/wmts?tk=9d2964079a8920b154e7bebe798f80ca',
+            layer: 'img',
+            style: 'default',
+            tileMatrixSetID: 'w',
+            format: 'tiles',
+            maximumLevel: 18,
+        }),
     });
 }
 
@@ -35,7 +39,7 @@ function addWmts(theViewer) {
             layer: 'XJXQCSSJBaseMap',
             style: 'default',
             tileMatrixSetID: 'default028mm',
-            format: 'image/png'
+            format: 'image/png',
         });
 
         theViewer.imageryLayers.addImageryProvider(imageryProvider);
@@ -46,7 +50,7 @@ function addArcgisLayer(theViewer) {
     if (theViewer) {
         theViewer.imageryLayers.addImageryProvider(
             new Cesium.ArcGisMapServerImageryProvider({
-                url: `http://10.14.3.71:6080/arcgis/rest/services/CityDesignV6/XJXQCSSJPlanMap/MapServer`
+                url: `http://172.30.3.199:6080/arcgis/rest/services/hx/JSXMSPJG_YZT/MapServer`,
             })
         );
     }
@@ -55,4 +59,4 @@ function addArcgisLayer(theViewer) {
 const viewer = initialViewer('cesiumContainer');
 viewer.camera.flyHome(0);
 // addWmts(viewer);
-// addArcgisLayer(viewer);
+addArcgisLayer(viewer);

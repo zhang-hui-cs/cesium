@@ -65,79 +65,19 @@
         function add3dTileset(viewer) {
             const tileset = viewer.scene.primitives.add(
                 new Cesium.Cesium3DTileset({
-                    url: 'http://localhost:2001/osgb/KFC/tileset.json',
-                    maximumMemoryUsage: 2048,
+                    url: "http://10.14.3.198:2001/test/Block/tileset.json",
+                    // url: 'http://localhost:2001/osgb/KFC/tileset.json',
+                    // maximumMemoryUsage: 512,
                     // debugShowMemoryUsage: true
                 })
             );
 
             viewer.flyTo(tileset);
-
-            tileset.readyPromise.then(function(theTileset) {
-                const sphere = theTileset.boundingSphere;
-                const center = sphere.center;
-                const matrix = Cesium.Transforms.eastNorthUpToFixedFrame(center);
-                console.log('tileset.readyPromise.transform', matrix);
-
-                for (let i = 1; i < 10; i++) {
-
-                    let cartesian4 = Cesium.Matrix4.getColumn(
-                        matrix,
-                        1,
-                        new Cesium.Cartesian4()
-                    );
-                    cartesian4 = Cesium.Cartesian4.multiplyByScalar(
-                        cartesian4,
-                        sphere.radius * i,
-                        new Cesium.Cartesian4()
-                    );
-
-                    const cartesian3 = new Cesium.Cartesian3(
-                        cartesian4.x,
-                        cartesian4.y,
-                        cartesian4.z
-                    );
-
-                    const modelMatrix = Cesium.Matrix4.fromTranslation(
-                        cartesian3,
-                        new Cesium.Matrix4()
-                    );
-
-                    const tileset2 = viewer.scene.primitives.add(
-                        new Cesium.Cesium3DTileset({
-                            url: 'http://10.14.3.21:2001/osgb/hengyang/tileset.json',
-                            modelMatrix: modelMatrix,
-                        })
-                    );
-
-                    viewer.flyTo(tileset2);
-                }
-            });
         }
 
         function startup(Cesium) {
             const viewer = initialViewer('cesiumContainer');
             add3dTileset(viewer);
-
-            document.addEventListener('keydown', (event) => {
-                if (event.key == '0') {
-                    viewer.scene.globe.show = !viewer.scene.globe.show;
-                } else if (event.key == '1') {
-                    setSSE(viewer, 16);
-                    // tileset.maximumScreenSpaceError = 16;
-                } else if (event.key == '2') {
-                    setSSE(viewer, 64);
-                } else if (event.key == '3') {
-                    // tileset.maximumScreenSpaceError = 128;
-                    setSSE(viewer, 128);
-                } else if (event.key == '4') {
-                    // tileset.maximumScreenSpaceError = 256;
-                    setSSE(viewer, 256);
-                } else if (event.key == '5') {
-                    // tileset.maximumScreenSpaceError = 512;
-                    setSSE(viewer, 512);
-                }
-            });
         }
 
         function setSSE(viewer, sse) {
