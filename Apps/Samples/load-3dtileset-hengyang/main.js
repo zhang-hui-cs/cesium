@@ -30,49 +30,11 @@ function initialViewer(element) {
 function add3dTileset(viewer) {
     const tileset = viewer.scene.primitives.add(
         new Cesium.Cesium3DTileset({
-            url: 'http://10.14.3.21:2001/osgb/hengyang/tileset.json',
+            url: 'http://localhost:2001/immovables/main/tileset.json',
         })
     );
 
-    // viewer.flyTo(tileset);
-
-    tileset.readyPromise.then(function (theTileset) {
-        const sphere = theTileset.boundingSphere;
-        const center = sphere.center;
-        const matrix = Cesium.Transforms.eastNorthUpToFixedFrame(center);
-        console.log('tileset.readyPromise.transform', matrix);
-
-        let cartesian4 = Cesium.Matrix4.getColumn(
-            matrix,
-            1,
-            new Cesium.Cartesian4()
-        );
-        cartesian4 = Cesium.Cartesian4.multiplyByScalar(
-            cartesian4,
-            sphere.radius * 1.5,
-            new Cesium.Cartesian4()
-        );
-
-        const cartesian3 = new Cesium.Cartesian3(
-            cartesian4.x,
-            cartesian4.y,
-            cartesian4.z
-        );
-
-        const modelMatrix = Cesium.Matrix4.fromTranslation(
-            cartesian3,
-            new Cesium.Matrix4()
-        );
-
-        const tileset2 = viewer.scene.primitives.add(
-            new Cesium.Cesium3DTileset({
-                url: 'http://10.14.3.21:2001/osgb/hengyang/tileset.json',
-                modelMatrix: modelMatrix,
-            })
-        );
-
-        viewer.flyTo(tileset2);
-    });
+    viewer.flyTo(tileset);
 }
 
 function main() {
